@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Restaurante</title>
+  <link rel="stylesheet" href="logincss.css">
+</head>
+<body>
+
+  <!-- Video de fondo -->
+  <video autoplay muted loop id="video-fondo">
+    <source src="img_general/comer.mp4" type="video/mp4">
+    Tu navegador no soporta el video.
+  </video>
+
+  <!-- Capa oscura -->
+  <div class="capa-superior"></div>
+
+  <!-- Contenido del login -->
+  <div class="contenido-login">
+
+    <!-- Logo arriba -->
+    <div class="logo-superior">
+      <img src="img_general/img_general.png" alt="Logo Restaurante">
+    </div>
+
+    <!-- Caja de login -->
+    <div class="login-box">
+      <h2>Ingreso</h2>
+      <input type="text" placeholder="👤 Usuario" id="usuario">
+      <input type="password" placeholder="🔒 Clave" id="clave">
+      <button onclick="verificarCredenciales()">Iniciar Sesión</button>
+        <p id="mensaje"></p>
+    </div>
+
+  </div>
+
+  <!-- Script opcional para redirección -->
+  <script>
+    function verificarCredenciales() {
+      const usuario = document.getElementById('usuario').value.trim().toLowerCase();
+      const clave = document.getElementById('clave').value;
+
+      // Simulando usuarios con sus claves y roles
+      const usuarios = {
+        admin: { clave: "admin123", ruta: "admin.html" },
+        mesero: { clave: "mesero123", ruta: "pedidos/index.html" },
+        recepcion: { clave: "recepcion123", ruta: "index.html" },
+        cocina: { clave: "cocina123", ruta: "platillos/index.html" }
+      };
+
+      if (usuarios[usuario] && usuarios[usuario].clave === clave) {
+        window.location.href = usuarios[usuario].ruta;
+      } else {
+        document.getElementById('mensaje').textContent = "Usuario o contraseña incorrectos.";
+      }
+    }
+  </script>
+
+</body>
+</html>

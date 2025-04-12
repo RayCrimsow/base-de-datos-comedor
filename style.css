@@ -1,0 +1,123 @@
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(to bottom right, #003973, #007bb2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    .formulario-contenedor {
+        background: white;
+        width: 100%;
+        max-width: 480px;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .encabezado {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #003973;
+        padding: 20px;
+        border-radius: 20px 20px 0 0;
+        margin: -30px -30px 20px;
+    }
+    
+    .logo {
+        height: 100px;
+    }
+    
+    /* Estilo para las etiquetas de los campos */
+    label {
+    font-size: 1.1rem; /* Puedes aumentar este valor para hacerlo aún más grande */
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    }
+    
+    /* Input de los campos */
+    input {
+        width: 100%;
+        padding: 12px 20px; /* <-- aquí aumentamos el espacio interno horizontal */
+        margin-top: 6px;
+        margin-bottom: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box; /* <-- esto asegura que el padding no se salga del tamaño */
+        font-size: 1rem;
+      }
+
+    .nuevo-cliente-btn {
+        padding: 14px 28px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        background-color: #e53935;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      .nuevo-cliente-btn:hover {
+        background-color: #c62828;
+        transform: scale(1.05);
+      }
+    
+    form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    form i {
+        margin-right: 8px;
+        color: #003973;
+    }
+    
+    form input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    form input:focus {
+        border-color: #1e88e5;
+        box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.3);
+        outline: none;
+    }
+    
+    .guardar-btn {
+        background: linear-gradient(to right, #1976d2, #1e88e5);
+        color: white;
+        padding: 14px;
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    
+    .guardar-btn:hover {
+        transform: scale(1.03);
+    }
+    
+    button:active {
+        transform: scale(0.97);
+    }
+    
