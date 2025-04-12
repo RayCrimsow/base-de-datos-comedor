@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Platillos</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="formulario-contenedor">
+    <header class="encabezado">
+      <img src="recursos/img_platillos.png" alt="Logo Sabores del Pacífico" class="logo" />
+      <div class="botones-header">
+        <button class="buscar-btn" id="buscarBtn">Buscar</button>
+        <button class="nuevo-btn">Nuevo Platillo</button>
+      </div>
+      
+    </header>
+
+    <form id="formulario">
+      <div class="formulario-contenido">
+        <div class="imagen-previa">
+          <img src="" alt="" id="preview">
+          <label for="imagen" class="imagen-btn">
+            <i class="fas fa-image"></i> Imagen
+          </label>
+          <input type="file" id="imagen" accept="image/*" style="display: none;">
+
+
+            <div class="campo switch-contenedor" style="display: flex; align-items: center; gap: 10px;">
+                <label for="disponible" style="margin: 0; font-weight: bold;">Activado</label>
+                <label class="switch">
+                <input type="checkbox" id="disponible">
+                <span class="slider round"></span>
+                </label>
+            </div>
+        
+        </div>
+
+        
+
+
+        <div class="datos">
+          <! -- y se cierra con -->  
+          <div class="campo">
+            <label for="id">ID Platillo</label>
+            <input type="text" id="id" value="1" disabled>
+          </div>
+
+          <div class="campo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" value="">
+          </div>
+
+          <div class="campo">
+            <label for="categoria">Categoría</label>
+            <input type="text" id="categoria" value="">
+          </div>
+
+          <div class="campo">
+            <label for="precio">Precio</label>
+            <input type="text" id="precio" value="0">
+          </div>
+
+          <div class="campo">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="botones">
+        <button type="submit" class="guardar">Guardar Platillo</button>
+        <button type="button" class="eliminar">Eliminar</button>
+      </div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  
+    const supabaseUrl = 'https://kqghqeuppzwzktkktufk.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxZ2hxZXVwcHp3emt0a2t0dWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MTg4NzQsImV4cCI6MjA1OTk5NDg3NH0.RFK3tSDTRiP6tNOIypUx5HLlAxzwXhq_vtjcMPbwE48';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+  
+    const form = document.getElementById('formulario');
+    const fileInput = document.getElementById('imagen');
+    const preview = document.getElementById('preview');
+  
+    // Vista previa de la imagen
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+      }
+    });
+  
+    // Función para limpiar el nombre del archivo
+    const limpiarNombre = (nombre) =>
+      nombre
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // elimina tildes
+        .replace(/\s+/g, '_')                            // espacios a guiones bajos
+        .replace(/[^\w.-]/g, '');                        // elimina caracteres especiales
+  
+    // Guardar platillo
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      const nombre = document.getElementById('nombre').value;
+      const categoria = document.getElementById('categoria').value;
+      const precio = parseFloat(document.getElementById('precio').value.replace('$', '').trim());
+      const descripcion = document.getElementById('descripcion').value;
+      const disponible = document.getElementById('disponible').checked;
+      const file = fileInput.files[0];
+  
+      let imagenUrl = '';
+  
+      // Subida de imagen
+      if (file) {
+        const nombreArchivo = `platillo_${Date.now()}_${limpiarNombre(file.name)}`;
+        const { data, error } = await supabase.storage
+          .from('imagenes-platillos') // Asegúrate de que el nombre del bucket sea EXACTAMENTE este
+          .upload(nombreArchivo, file);
+  
+        if (error) {
+          alert('❌ Error al subir imagen');
+          console.error(error);
+          return;
+        }
+  
+        const { data: urlData } = supabase
+          .storage
+          .from('imagenes-platillos')
+          .getPublicUrl(nombreArchivo);
+  
+        imagenUrl = urlData.publicUrl;
+      }
+  
+      // Insertar registro en la tabla
+      const { error: insertError } = await supabase
+        .from('Platillos')
+        .insert([{
+          nombre,
+          categoria,
+          precio,
+          descripcion,
+          disponible,
+          imagen_url: imagenUrl
+        }]);
+  
+      if (insertError) {
+        alert('❌ Error al guardar el platillo');
+        console.error(insertError);
+      } else {
+        alert('✅ Platillo guardado con éxito');
+        form.reset();
+        preview.src = '/img_general/spaghetti.png'; // Imagen por defecto
+      }
+    });
+
+
+    //boton de buscar
+    const buscarBtn = document.getElementById('buscarBtn');
+
+buscarBtn.addEventListener('click', async () => {
+  const nombre = document.getElementById('nombre').value.trim();
+
+  if (!nombre) {
+    alert('⚠️ Ingresa el nombre del platillo a buscar');
+    return;
+  }
+
+  // Consulta en Supabase
+  const { data, error } = await supabase
+    .from('Platillos')
+    .select('*')
+    .eq('nombre', nombre); // Busca sin importar mayúsculas/minúsculas
+
+  if (error) {
+    console.error(error);
+    alert('❌ Error buscando platillo');
+    return;
+  }
+
+  if (data.length === 0) {
+    alert('🔎 No se encontró ningún platillo con ese nombre');
+    return;
+  }
+
+  // Rellenar campos con los datos del primer platillo encontrado
+  const platillo = data[0];
+  document.getElementById('id').value = platillo.id || '';
+  document.getElementById('nombre').value = platillo.nombre || '';
+  document.getElementById('categoria').value = platillo.categoria || '';
+  document.getElementById('precio').value = platillo.precio || '';
+  document.getElementById('descripcion').value = platillo.descripcion || '';
+  document.getElementById('disponible').checked = platillo.disponible || false;
+  document.getElementById('preview').src = platillo.imagen_url || '/img_general/spaghetti.png';
+});
+
+    
+  </script>
+  
+
+</body>
+</html>
